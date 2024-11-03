@@ -22,7 +22,7 @@ local button = Instance.new("TextButton")
 button.Name = "ClickButton"
 button.Size = UDim2.new(0, 100, 0, 50)
 button.Position = UDim2.new(0.5, -50, 0.5, -25)
-button.Text = "Toggle on"
+button.Text = "Off"
 button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 button.TextColor3 = Color3.fromRGB(255, 255, 255)
 button.TextScaled = true
@@ -68,7 +68,7 @@ end)
 
 button.MouseButton1Click:Connect(function()
     killLoopActive = not killLoopActive
-    button.Text = killLoopActive and "Toggle off" or "Toggle on"
+    button.Text = killLoopActive and "On" or "Off"
 
     if killLoopActive then
         coroutine.wrap(function()
