@@ -15,7 +15,6 @@ local labelOutline = Instance.new("UIStroke")
 labelOutline.Thickness = 2
 labelOutline.Color = Color3.fromRGB(255, 0, 0)
 labelOutline.Parent = label
-
 label.Parent = screenGui
 
 local button = Instance.new("TextButton")
@@ -31,7 +30,6 @@ local buttonOutline = Instance.new("UIStroke")
 buttonOutline.Thickness = 2
 buttonOutline.Color = Color3.fromRGB(255, 0, 0)
 buttonOutline.Parent = button
-
 button.Parent = screenGui
 
 local dragging = false
@@ -71,6 +69,8 @@ button.MouseButton1Click:Connect(function()
     button.Text = killLoopActive and "On" or "Off"
 
     if killLoopActive then
+        button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        buttonOutline.Color = Color3.fromRGB(0, 0, 0)
         coroutine.wrap(function()
             while killLoopActive do
                 for _, v in pairs(game.Workspace.Room.Enemies:GetDescendants()) do
@@ -81,5 +81,8 @@ button.MouseButton1Click:Connect(function()
                 wait(1)
             end
         end)()
+    else
+        button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        buttonOutline.Color = Color3.fromRGB(255, 0, 0)
     end
 end)
