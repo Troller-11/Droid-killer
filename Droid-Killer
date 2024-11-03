@@ -1,1 +1,85 @@
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "MobileButtonGui"
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
+local label = Instance.new("TextLabel")
+label.Name = "ButtonLabel"
+label.Size = UDim2.new(0, 100, 0, 30)
+label.Position = UDim2.new(0.5, -50, 0.5, -60)
+label.Text = "Droid Killer"
+label.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+label.TextColor3 = Color3.fromRGB(255, 255, 255)
+label.TextScaled = true
+
+local labelOutline = Instance.new("UIStroke")
+labelOutline.Thickness = 2
+labelOutline.Color = Color3.fromRGB(255, 0, 0)
+labelOutline.Parent = label
+
+label.Parent = screenGui
+
+local button = Instance.new("TextButton")
+button.Name = "ClickButton"
+button.Size = UDim2.new(0, 100, 0, 50)
+button.Position = UDim2.new(0.5, -50, 0.5, -25)
+button.Text = "Toggle on"
+button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.TextScaled = true
+
+local buttonOutline = Instance.new("UIStroke")
+buttonOutline.Thickness = 2
+buttonOutline.Color = Color3.fromRGB(255, 0, 0)
+buttonOutline.Parent = button
+
+button.Parent = screenGui
+
+local dragging = false
+local dragStart
+local startPos
+local hasMoved = false
+local killLoopActive = false
+
+label.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = label.Position
+        hasMoved = false
+    end
+end)
+
+label.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement) then
+        local delta = input.Position - dragStart
+        if delta.Magnitude > 5 then
+            hasMoved = true
+        end
+        label.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        button.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y + 35)
+    end
+end)
+
+label.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+button.MouseButton1Click:Connect(function()
+    killLoopActive = not killLoopActive
+    button.Text = killLoopActive and "Toggle off" or "Toggle on"
+
+    if killLoopActive then
+        coroutine.wrap(function()
+            while killLoopActive do
+                for _, v in pairs(game.Workspace.Room.Enemies:GetDescendants()) do
+                    if v:IsA("Humanoid") and v.Parent.Name ~= game.Players.LocalPlayer.Name then
+                        v.Health = 0
+                    end
+                end
+                wait(1)
+            end
+        end)()
+    end
+end)
